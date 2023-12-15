@@ -49,11 +49,13 @@ type Option func(*Client) error
 
 // WithEventTracer provides a tracer for the pubsub system
 func WithEventTracer(tracer EventTracer) Option {
-	return func(p *Client) error {
-		if p.tracer != nil {
-			p.tracer.tracer = tracer
+	return func(c *Client) error {
+		if c.tracer != nil {
+			fmt.Println("p.tracer not nil")
+			//p.tracer.tracer = tracer
 		} else {
-			p.tracer = &blockTracer{tracer: tracer, pid: p.host.ID()}
+			fmt.Println("p.tracer nil starting with host ", c.host.ID)
+			//p.tracer = &blockTracer{tracer: tracer, pid: p.host.ID()}
 		}
 		return nil
 	}

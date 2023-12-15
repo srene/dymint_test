@@ -89,6 +89,8 @@ type Client struct {
 	logger log.Logger
 
 	tracer *blockTracer
+
+	opts []Option
 }
 
 // NewClient creates new Client object.
@@ -108,13 +110,7 @@ func NewClient(conf config.P2PConfig, privKey crypto.PrivKey, chainID string, lo
 		privKey: privKey,
 		chainID: chainID,
 		logger:  logger,
-	}
-
-	for _, option := range opts {
-		err := option(c)
-		if err != nil {
-			return nil, err
-		}
+		opts:    opts,
 	}
 
 	return c, nil
@@ -135,6 +131,13 @@ func (c *Client) Start(ctx context.Context) error {
 	if err != nil {
 		return err
 	}
+	for _, option := range c.opts {
+		err := option(c)
+		if err != nil {
+			return err
+		}
+	}
+
 	return c.startWithHost(ctx, host)
 }
 

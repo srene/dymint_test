@@ -61,6 +61,16 @@ func WithEventTracer(tracer EventTracer) Option {
 	}
 }
 
+// WithEventTracer provides a tracer for the pubsub system
+func WithGossipEventTracer(tracer pubsub.EventTracer) Option {
+	//fmt.Println("p.tracer not nil")
+	//return nil
+	return func(c *Client) error {
+		c.gossipTracer = pubsub.WithEventTracer(tracer)
+		return nil
+	}
+}
+
 // Client is a P2P client, implemented with libp2p.
 //
 // Initially, client connects to predefined seed nodes (aka bootnodes, bootstrap nodes).
@@ -93,6 +103,8 @@ type Client struct {
 	tracer *blockTracer
 
 	opts []Option
+
+	gossipTracer pubsub.Option
 }
 
 // NewClient creates new Client object.
@@ -405,7 +417,7 @@ func (c *Client) setupGossiping(ctx context.Context) error {
 	pubsub.GossipSubHeartbeatInterval = time.Duration(1 * time.Second)
 	pubsub.GossipSubMaxIHaveMessages = 500
 
-	ps, err := pubsub.NewGossipSub(ctx, c.host)
+	ps, err := pubsub.NewGossipSub(ctx, c.host, c.gossipTracer)
 	//c.logger.Info("Starting gosssip", "d", pubsub.GossipSubD)
 	//c.logger.Info("Starting gosssip", "dhi", pubsub.GossipSubDhi)
 	//c.logger.Info("Starting gosssip", "dlo", pubsub.GossipSubDlo)

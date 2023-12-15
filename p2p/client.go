@@ -49,9 +49,9 @@ type Option func(*Client) error
 
 // WithEventTracer provides a tracer for the pubsub system
 func WithEventTracer(tracer EventTracer) Option {
-	fmt.Println("p.tracer not nil")
-	return nil
-	/*return func(c *Client) error {
+	//fmt.Println("p.tracer not nil")
+	//return nil
+	return func(c *Client) error {
 		if c.tracer != nil {
 			fmt.Println("p.tracer not nil")
 			//p.tracer.tracer = tracer
@@ -60,7 +60,7 @@ func WithEventTracer(tracer EventTracer) Option {
 			//p.tracer = &blockTracer{tracer: tracer, pid: p.host.ID()}
 		}
 		return nil
-	}*/
+	}
 }
 
 // Client is a P2P client, implemented with libp2p.

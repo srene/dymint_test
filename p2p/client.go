@@ -155,6 +155,13 @@ func (c *Client) startWithHost(ctx context.Context, h host.Host) error {
 		c.logger.Info("listening on", "address", fmt.Sprintf("%s/p2p/%s", a, c.host.ID()))
 	}
 
+	for _, option := range c.opts {
+		err := option(c)
+		if err != nil {
+			c.logger.Error("Failing to enable p2pclient option", err)
+		}
+	}
+
 	c.logger.Debug("setting up gossiping")
 	err := c.setupGossiping(ctx)
 	if err != nil {
@@ -173,12 +180,6 @@ func (c *Client) startWithHost(ctx context.Context, h host.Host) error {
 		return err
 	}
 
-	/*for _, option := range c.opts {
-		err := option(c)
-		if err != nil {
-			c.logger.Error("Failing to enable p2pclient option", err)
-		}
-	}*/
 	return nil
 }
 

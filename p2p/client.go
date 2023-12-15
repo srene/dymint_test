@@ -66,7 +66,7 @@ func WithGossipEventTracer(tracer pubsub.EventTracer) Option {
 	//fmt.Println("p.tracer not nil")
 	//return nil
 	return func(c *Client) error {
-		c.gossipTracer = pubsub.WithEventTracer(tracer)
+		c.gossipTracer = tracer
 		return nil
 	}
 }
@@ -104,7 +104,7 @@ type Client struct {
 
 	opts []Option
 
-	gossipTracer pubsub.Option
+	gossipTracer pubsub.EventTracer
 }
 
 // NewClient creates new Client object.
@@ -417,7 +417,12 @@ func (c *Client) setupGossiping(ctx context.Context) error {
 	pubsub.GossipSubHeartbeatInterval = time.Duration(1 * time.Second)
 	pubsub.GossipSubMaxIHaveMessages = 500
 
-	ps, err := pubsub.NewGossipSub(ctx, c.host, c.gossipTracer)
+	opts := []pubsub.Option{}
+	if c.gossipTracer != nil {
+		opts = append(opts, pubsub.WithEventTracer(c.gossipTracer))
+	}
+
+	ps, err := pubsub.NewGossipSub(ctx, c.host, opts...)
 	//c.logger.Info("Starting gosssip", "d", pubsub.GossipSubD)
 	//c.logger.Info("Starting gosssip", "dhi", pubsub.GossipSubDhi)
 	//c.logger.Info("Starting gosssip", "dlo", pubsub.GossipSubDlo)

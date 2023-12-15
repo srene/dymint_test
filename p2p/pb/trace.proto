@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+option go_package = "github.com/dymensionxyz/dymint/settlement/p2p/pb";
+
+package pb;
+
+message TraceEvent {
+  optional Type type = 1;
+  optional bytes peerID = 2;
+  optional int64 timestamp = 3;
+
+  optional RececeivedBlock rbMessage = 4;
+
+  enum Type {
+    RECEIVED_BLOCK = 0;
+  }
+
+  message RececeivedBlock {
+    optional uint64 height = 1;
+  }
+
+}
+
+message TraceEventBatch {
+  repeated TraceEvent batch = 1;
+}

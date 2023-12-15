@@ -2,11 +2,12 @@ package p2p
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/dymensionxyz/dymint/types"
 	"github.com/libp2p/go-libp2p/core/peer"
 
-	pb "github.com/libp2p/go-libp2p-pubsub/pb"
+	pb "github.com/dymensionxyz/dymint/p2p/pb"
 )
 
 // EventTracer is a generic event tracer interface.
@@ -44,6 +45,16 @@ func (t *blockTracer) ReceiveBlock(p peer.ID, block types.Block) {
 	if t.tracer == nil {
 		return
 	}
+	now := time.Now().UnixNano()
+	evt := &pb.TraceEvent{
+		Type:      pb.TraceEvent_RECEIVED_BLOCK.Enum(),
+		PeerID:    []byte(t.pid),
+		Timestamp: &now,
+		RbMessage: &pb.TraceEvent_RececeivedBlock{
+			Height: &block.Header.Height,
+		},
+	}
 
+	t.tracer.Trace(evt)
 	fmt.Println("Receiving block ", block.Header.Height, p)
 }

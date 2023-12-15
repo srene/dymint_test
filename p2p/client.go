@@ -55,7 +55,6 @@ func WithEventTracer(tracer EventTracer) Option {
 		if c.tracer != nil {
 			c.tracer.tracer = tracer
 		} else {
-			//fmt.Println("p.tracer nil starting with host ", c.chainID)
 			c.tracer = &blockTracer{tracer: tracer, pid: c.host.ID()}
 		}
 		return nil

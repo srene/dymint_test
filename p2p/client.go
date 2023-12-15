@@ -134,7 +134,7 @@ func (c *Client) Start(ctx context.Context) error {
 	for _, option := range c.opts {
 		err := option(c)
 		if err != nil {
-			return err
+			c.logger.Error("Failing to enable p2pclient option", err)
 		}
 	}
 

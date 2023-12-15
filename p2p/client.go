@@ -116,6 +116,13 @@ func NewClient(conf config.P2PConfig, privKey crypto.PrivKey, chainID string, lo
 		logger:  logger,
 		opts:    opts,
 	}
+	for _, option := range opts {
+		err := option(c)
+		if err != nil {
+			c.logger.Error("Failing to enable p2pclient option", err)
+		}
+		//c.logger.Debug("option", option)
+	}
 
 	return c, nil
 }
@@ -134,13 +141,6 @@ func (c *Client) Start(ctx context.Context) error {
 	host, err := c.listen(ctx)
 	if err != nil {
 		return err
-	}
-	for _, option := range c.opts {
-		/*err := option(c)
-		if err != nil {
-			c.logger.Error("Failing to enable p2pclient option", err)
-		}*/
-		c.logger.Debug("option", option)
 	}
 
 	return c.startWithHost(ctx, host)

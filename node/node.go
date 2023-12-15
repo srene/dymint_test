@@ -11,7 +11,6 @@ import (
 
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 
-	ps "github.com/libp2p/go-libp2p-pubsub"
 	"github.com/libp2p/go-libp2p/core/crypto"
 
 	llcfg "github.com/tendermint/tendermint/config"
@@ -118,7 +117,7 @@ type Node struct {
 }
 
 // NewNode creates new Dymint node.
-func NewNode(ctx context.Context, conf config.NodeConfig, p2pKey crypto.PrivKey, signingKey crypto.PrivKey, clientCreator proxy.ClientCreator, genesis *tmtypes.GenesisDoc, logger log.Logger, opts ...ps.Option) (*Node, error) {
+func NewNode(ctx context.Context, conf config.NodeConfig, p2pKey crypto.PrivKey, signingKey crypto.PrivKey, clientCreator proxy.ClientCreator, genesis *tmtypes.GenesisDoc, logger log.Logger, opts ...p2p.Option) (*Node, error) {
 	proxyApp := proxy.NewAppConns(clientCreator)
 	proxyApp.SetLogger(logger.With("module", "proxy"))
 	if err := proxyApp.Start(); err != nil {

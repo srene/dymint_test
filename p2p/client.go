@@ -24,6 +24,7 @@ import (
 
 	"github.com/dymensionxyz/dymint/config"
 	"github.com/dymensionxyz/dymint/log"
+	"github.com/dymensionxyz/dymint/types"
 )
 
 // TODO(tzdybal): refactor to configuration parameters
@@ -43,6 +44,20 @@ const (
 	// blockTopicSuffix is added after namespace to create pubsub topic for block gossiping.
 	blockTopicSuffix = "-block"
 )
+
+type Option func(*Client) error
+
+// WithEventTracer provides a tracer for the pubsub system
+func WithEventTracer(tracer EventTracer) Option {
+	return func(p *Client) error {
+		if p.tracer != nil {
+			p.tracer.tracer = tracer
+		} else {
+			p.tracer = &blockTracer{tracer: tracer, pid: p.host.ID()}
+		}
+		return nil
+	}
+}
 
 // Client is a P2P client, implemented with libp2p.
 //
@@ -73,14 +88,14 @@ type Client struct {
 
 	logger log.Logger
 
-	opts []pubsub.Option
+	tracer *blockTracer
 }
 
 // NewClient creates new Client object.
 //
 // Basic checks on parameters are done, and default parameters are provided for unset-configuration
 // TODO(tzdybal): consider passing entire config, not just P2P config, to reduce number of arguments
-func NewClient(conf config.P2PConfig, privKey crypto.PrivKey, chainID string, logger log.Logger, opts ...pubsub.Option) (*Client, error) {
+func NewClient(conf config.P2PConfig, privKey crypto.PrivKey, chainID string, logger log.Logger, opts ...Option) (*Client, error) {
 	if privKey == nil {
 		return nil, errNoPrivKey
 	}
@@ -88,13 +103,21 @@ func NewClient(conf config.P2PConfig, privKey crypto.PrivKey, chainID string, lo
 		conf.ListenAddress = config.DefaultListenAddress
 	}
 
-	return &Client{
+	c := &Client{
 		conf:    conf,
 		privKey: privKey,
 		chainID: chainID,
 		logger:  logger,
-		opts:    opts,
-	}, nil
+	}
+
+	for _, option := range opts {
+		err := option(c)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	return c, nil
 }
 
 // Start establish Client's P2P connectivity.
@@ -377,18 +400,14 @@ func (c *Client) setupGossiping(ctx context.Context) error {
 	pubsub.GossipSubHeartbeatInterval = time.Duration(1 * time.Second)
 	pubsub.GossipSubMaxIHaveMessages = 500
 
-	ps, err := pubsub.NewGossipSub(ctx, c.host, c.opts...)
-	c.logger.Info("Starting gosssip", "d", pubsub.GossipSubD)
-	c.logger.Info("Starting gosssip", "dhi", pubsub.GossipSubDhi)
-	c.logger.Info("Starting gosssip", "dlo", pubsub.GossipSubDlo)
+	ps, err := pubsub.NewGossipSub(ctx, c.host)
+	//c.logger.Info("Starting gosssip", "d", pubsub.GossipSubD)
+	//c.logger.Info("Starting gosssip", "dhi", pubsub.GossipSubDhi)
+	//c.logger.Info("Starting gosssip", "dlo", pubsub.GossipSubDlo)
 
 	pubsub.GossipSubDhi = 12
 	pubsub.GossipSubD = 8
 	pubsub.GossipSubDlo = 6
-
-	c.logger.Info("Starting gosssip", "d", pubsub.GossipSubD)
-	c.logger.Info("Starting gosssip", "dhi", pubsub.GossipSubDhi)
-	c.logger.Info("Starting gosssip", "dlo", pubsub.GossipSubDlo)
 
 	if err != nil {
 		return err
@@ -465,4 +484,8 @@ func (c *Client) NewTxValidator() GossipValidator {
 	return func(g *GossipMessage) bool {
 		return true
 	}
+}
+
+func (c *Client) NewBlock(block types.Block) {
+	c.tracer.ReceiveBlock(c.host.ID(), block)
 }

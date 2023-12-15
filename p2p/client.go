@@ -56,7 +56,7 @@ func WithEventTracer(tracer EventTracer) Option {
 			c.tracer.tracer = tracer
 		} else {
 			//fmt.Println("p.tracer nil starting with host ", c.chainID)
-			c.tracer = &blockTracer{tracer: tracer, pid: ""}
+			c.tracer = &blockTracer{tracer: tracer, pid: c.host.ID()}
 		}
 		return nil
 	}
@@ -92,6 +92,8 @@ type Client struct {
 	logger log.Logger
 
 	tracer *blockTracer
+
+	opts []Option
 }
 
 // NewClient creates new Client object.
@@ -111,12 +113,7 @@ func NewClient(conf config.P2PConfig, privKey crypto.PrivKey, chainID string, lo
 		privKey: privKey,
 		chainID: chainID,
 		logger:  logger,
-	}
-	for _, option := range opts {
-		err := option(c)
-		if err != nil {
-			c.logger.Error("Failing to enable p2pclient option", err)
-		}
+		opts:    opts,
 	}
 
 	return c, nil
@@ -165,6 +162,12 @@ func (c *Client) startWithHost(ctx context.Context, h host.Host) error {
 		return err
 	}
 
+	for _, option := range c.opts {
+		err := option(c)
+		if err != nil {
+			c.logger.Error("Failing to enable p2pclient option", err)
+		}
+	}
 	return nil
 }
 

@@ -45,5 +45,5 @@ func (t *blockTracer) ReceiveBlock(p peer.ID, block types.Block) {
 		return
 	}
 
-	fmt.Println("Rceiving block ", block.Header.Height)
+	fmt.Println("Receiving block ", block.Header.Height, p)
 }

@@ -17,7 +17,7 @@ type EventTracer interface {
 }
 
 // RawTracer is a low level tracing interface that allows an application to trace the internal
-// operation of the pubsub subsystem.
+// operation of the subsystem.
 //
 // Note that the tracers are invoked synchronously, which means that application tracers must
 // take care to not block or modify arguments.

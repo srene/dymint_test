@@ -2,7 +2,7 @@ syntax = "proto2";
 
 option go_package = "github.com/dymensionxyz/dymint/p2p/pb";
 
-package pb;
+package p2p.pb;
 
 message TraceEvent {
   optional Type type = 1;

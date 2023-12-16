@@ -15,6 +15,10 @@ message TraceEvent {
     RECEIVED_BLOCK = 0;
   }
 
+  message PublishedBlock {
+    optional uint64 height = 1;
+  }
+
   message RececeivedBlock {
     optional uint64 height = 1;
   }

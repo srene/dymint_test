@@ -1,7 +1,6 @@
 package p2p
 
 import (
-	"fmt"
 	"time"
 
 	"github.com/dymensionxyz/dymint/types"
@@ -27,6 +26,7 @@ type EventTracer interface {
 // in the future.
 type RawTracer interface {
 	// AddPeer is invoked when a new peer is added.
+	PublishBlock(p peer.ID, block *types.Block)
 	ReceiveBlock(p peer.ID, Block types.Block)
 }
 
@@ -56,7 +56,7 @@ func (t *blockTracer) PublishBlock(p peer.ID, block *types.Block) {
 	}
 
 	t.tracer.Trace(evt)
-	fmt.Println("Publishing block ", block.Header.Height, p)
+	//fmt.Println("Publishing block ", block.Header.Height, p)
 }
 func (t *blockTracer) ReceiveBlock(p peer.ID, block *types.Block) {
 	if t == nil {
@@ -77,5 +77,5 @@ func (t *blockTracer) ReceiveBlock(p peer.ID, block *types.Block) {
 	}
 
 	t.tracer.Trace(evt)
-	fmt.Println("Receiving block ", block.Header.Height, p)
+	//fmt.Println("Receiving block ", block.Header.Height, p)
 }

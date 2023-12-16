@@ -9,10 +9,12 @@ message TraceEvent {
   optional bytes peerID = 2;
   optional int64 timestamp = 3;
 
-  optional RececeivedBlock rbMessage = 4;
+  optional PublishedBlock pbMessage = 4;
+  optional RececeivedBlock rbMessage = 5;
 
   enum Type {
-    RECEIVED_BLOCK = 0;
+    PUBLISHED_BLOCk = 0;
+    RECEIVED_BLOCK = 1;
   }
 
   message PublishedBlock {

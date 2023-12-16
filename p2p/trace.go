@@ -37,7 +37,28 @@ type blockTracer struct {
 	pid    peer.ID
 }
 
-func (t *blockTracer) ReceiveBlock(p peer.ID, block types.Block) {
+func (t *blockTracer) PublishBlock(p peer.ID, block *types.Block) {
+	if t == nil {
+		return
+	}
+
+	if t.tracer == nil {
+		return
+	}
+	now := time.Now().UnixNano()
+	evt := &pb.TraceEvent{
+		Type:      pb.TraceEvent_PUBLISHED_BLOCk.Enum(),
+		PeerID:    []byte(t.pid),
+		Timestamp: &now,
+		PbMessage: &pb.TraceEvent_PublishedBlock{
+			Height: &block.Header.Height,
+		},
+	}
+
+	t.tracer.Trace(evt)
+	fmt.Println("Publishing block ", block.Header.Height, p)
+}
+func (t *blockTracer) ReceiveBlock(p peer.ID, block *types.Block) {
 	if t == nil {
 		return
 	}

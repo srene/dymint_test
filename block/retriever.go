@@ -99,6 +99,7 @@ func (m *Manager) processNextDABatch(ctx context.Context, daHeight uint64) error
 			if err != nil {
 				return err
 			}
+			m.p2pClient.BlockReceived(block)
 		}
 	}
 	return nil

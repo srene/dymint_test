@@ -509,6 +509,10 @@ func (c *Client) NewTxValidator() GossipValidator {
 	}
 }
 
-func (c *Client) NewBlock(block types.Block) {
+func (c *Client) BlockPublished(block *types.Block) {
+	c.tracer.PublishBlock(c.host.ID(), block)
+}
+
+func (c *Client) BlockReceived(block *types.Block) {
 	c.tracer.ReceiveBlock(c.host.ID(), block)
 }

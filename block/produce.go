@@ -192,7 +192,7 @@ func (m *Manager) produceBlock(ctx context.Context, allowEmpty bool) error {
 	if err := m.gossipBlock(ctx, *block, *commit); err != nil {
 		return err
 	}
-
+	m.p2pClient.BlockPublished(block)
 	if err := m.applyBlock(ctx, block, commit, blockMetaData{source: producedBlock}); err != nil {
 		return err
 	}

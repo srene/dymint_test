@@ -132,8 +132,8 @@ func load(f string, addEvent func(*pb.TraceEvent)) error {
 func (ts *tracestat) addEvent(evt *pb.TraceEvent) {
 
 	var (
-		peer = peer.ID(evt.GetPeerID())
-		//timestamp = evt.GetTimestamp()
+		peer      = peer.ID(evt.GetPeerID())
+		timestamp = evt.GetTimestamp()
 	)
 
 	ps, ok := ts.peers[peer]
@@ -144,9 +144,41 @@ func (ts *tracestat) addEvent(evt *pb.TraceEvent) {
 
 	//fmt.Printf("message peer %s\n", peer)
 	switch evt.GetType() {
-	/*case pb.TraceEvent_RECEIVED_BLOCK:
-	height := evt.GetRbMessage().GetHeight()
-	*/
+	case pb.TraceEvent_PUBLISHED_BLOCk:
+		height := evt.GetPbMessage().GetHeight()
+		ps.publish++
+		ts.aggregate.publish++
+
+		_, ok := ts.msgs[height]
+
+		if !ok {
+			//ts.count++
+			//ts.msgsOrder[ts.count] = mid
+			ts.msgsOrder = append(ts.msgsOrder, height)
+			//fmt.Println("new message", mid)
+		}
+		ts.msgs[height] = append(ts.msgs[height], timestamp)
+
+	case pb.TraceEvent_RECEIVED_BLOCK:
+		height := evt.GetRbMessage().GetHeight()
+		ps.deliver++
+		ts.aggregate.deliver++
+
+		//peer := string(evt.GetDuplicateMessage().GetReceivedFrom())
+
+		_, ok := ts.msgs[height]
+
+		if !ok {
+			//ts.count++
+			//ts.msgsOrder[ts.count] = mid
+			ts.msgsOrder = append(ts.msgsOrder, height)
+			//fmt.Println("new deliver message", mid, ts.count, timestamp)
+		}
+
+		ts.msgs[height] = append(ts.msgs[height], timestamp)
+
+		//ts.msgsPeer[key{peer, mid}] = append(ts.msgsPeer[key{peer, mid}], timestamp)
+
 	}
 }
 

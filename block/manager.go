@@ -225,8 +225,6 @@ func (m *Manager) applyBlockCallback(event pubsub.Message) {
 	block := eventData.Block
 	commit := eventData.Commit
 
-	m.p2pClient.NewBlock(block)
-
 	err := m.applyBlock(context.Background(), &block, &commit, blockMetaData{source: gossipedBlock})
 
 	if err != nil {

@@ -27,6 +27,7 @@ func (m *Manager) applyBlock(ctx context.Context, block *types.Block, commit *ty
 	}
 
 	m.logger.Debug("Applying block", "height", block.Header.Height, "source", blockMetaData.source, "block cache", len(m.prevBlock))
+	m.p2pClient.BlockReceived(block)
 
 	// Check if alignment is needed due to incosistencies between the store and the app.
 	isAlignRequired, err := m.alignStoreWithApp(ctx, block)

@@ -2,13 +2,15 @@ package main
 
 import (
 	"compress/gzip"
+	"encoding/binary"
 	"flag"
 	"fmt"
 	"io"
 	"os"
 	"sort"
 
-	pb "github.com/dymensionxyz/dymint/p2p/pb"
+	pb "github.com/libp2p/go-libp2p-pubsub/pb"
+	//pb "github.com/dymensionxyz/dymint/p2p/pb"
 	"github.com/libp2p/go-libp2p/core/peer"
 
 	//"github.com/libp2p/go-libp2p/core/peer"
@@ -144,8 +146,10 @@ func (ts *tracestat) addEvent(evt *pb.TraceEvent) {
 
 	//fmt.Printf("message peer %s\n", peer)
 	switch evt.GetType() {
-	case pb.TraceEvent_PUBLISHED_BLOCk:
-		height := evt.GetPbMessage().GetHeight()
+	case pb.TraceEvent_PUBLISH_MESSAGE:
+		b := evt.GetPublishMessage().GetMessageID()
+		height := uint64(binary.LittleEndian.Uint64(b))
+
 		ps.publish++
 		ts.aggregate.publish++
 
@@ -159,8 +163,9 @@ func (ts *tracestat) addEvent(evt *pb.TraceEvent) {
 		}
 		ts.msgs[height] = append(ts.msgs[height], timestamp)
 
-	case pb.TraceEvent_RECEIVED_BLOCK:
-		height := evt.GetRbMessage().GetHeight()
+	case pb.TraceEvent_DELIVER_MESSAGE:
+		b := evt.GetDeliverMessage().GetMessageID()
+		height := uint64(binary.LittleEndian.Uint64(b))
 		ps.deliver++
 		ts.aggregate.deliver++
 

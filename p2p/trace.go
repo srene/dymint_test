@@ -1,12 +1,13 @@
 package p2p
 
 import (
+	"encoding/binary"
 	"time"
 
 	"github.com/dymensionxyz/dymint/types"
+	pb "github.com/libp2p/go-libp2p-pubsub/pb"
 	"github.com/libp2p/go-libp2p/core/peer"
-
-	pb "github.com/dymensionxyz/dymint/p2p/pb"
+	//pb "github.com/dymensionxyz/dymint/p2p/pb"
 )
 
 // EventTracer is a generic event tracer interface.
@@ -46,13 +47,17 @@ func (t *blockTracer) PublishBlock(p peer.ID, block *types.Block) {
 		return
 	}
 	now := time.Now().UnixNano()
+	b := make([]byte, 8)
+	binary.LittleEndian.PutUint64(b, uint64(block.Header.Height))
+
 	evt := &pb.TraceEvent{
-		Type:      pb.TraceEvent_PUBLISHED_BLOCk.Enum(),
-		PeerID:    []byte(t.pid),
-		Timestamp: &now,
-		PbMessage: &pb.TraceEvent_PublishedBlock{
+		Type:           pb.TraceEvent_PUBLISH_MESSAGE.Enum(),
+		PeerID:         []byte(t.pid),
+		Timestamp:      &now,
+		PublishMessage: &pb.TraceEvent_PublishMessage{MessageID: b},
+		/*PbMessage: &pb.TraceEvent_PublishedBlock{
 			Height: &block.Header.Height,
-		},
+		},*/
 	}
 
 	t.tracer.Trace(evt)
@@ -66,14 +71,18 @@ func (t *blockTracer) ReceiveBlock(p peer.ID, block *types.Block) {
 	if t.tracer == nil {
 		return
 	}
+	b := make([]byte, 8)
+	binary.LittleEndian.PutUint64(b, uint64(block.Header.Height))
+
 	now := time.Now().UnixNano()
 	evt := &pb.TraceEvent{
-		Type:      pb.TraceEvent_RECEIVED_BLOCK.Enum(),
-		PeerID:    []byte(t.pid),
-		Timestamp: &now,
-		RbMessage: &pb.TraceEvent_RececeivedBlock{
+		Type:           pb.TraceEvent_DELIVER_MESSAGE.Enum(),
+		PeerID:         []byte(t.pid),
+		Timestamp:      &now,
+		DeliverMessage: &pb.TraceEvent_DeliverMessage{MessageID: b},
+		/*RbMessage: &pb.TraceEvent_DeliverMessage{
 			Height: &block.Header.Height,
-		},
+		},*/
 	}
 
 	t.tracer.Trace(evt)

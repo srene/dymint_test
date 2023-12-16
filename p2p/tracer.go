@@ -2,11 +2,13 @@ package p2p
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 	"os"
 	"sync"
 
-	pb "github.com/dymensionxyz/dymint/p2p/pb"
+	//pb "github.com/dymensionxyz/dymint/p2p/pb"
+	pb "github.com/libp2p/go-libp2p-pubsub/pb"
 
 	"github.com/libp2p/go-msgio/protoio"
 )
@@ -157,7 +159,7 @@ func (t *PBTracer) doWrite() {
 		for i, evt := range buf {
 			err := w.WriteMsg(evt)
 			if err != nil {
-				//log.Warnf("error writing event trace: %s", err.Error())
+				fmt.Println("error writing event trace: ", err.Error())
 			}
 			buf[i] = nil
 		}

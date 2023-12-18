@@ -161,6 +161,7 @@ func (ts *tracestat) addEvent(evt *pb.TraceEvent) {
 			ts.msgsOrder = append(ts.msgsOrder, height)
 			//fmt.Println("new message", mid)
 		}
+		fmt.Println("Publish block", height, timestamp)
 		ts.msgs[height] = append(ts.msgs[height], timestamp)
 
 	case pb.TraceEvent_DELIVER_MESSAGE:
@@ -179,6 +180,7 @@ func (ts *tracestat) addEvent(evt *pb.TraceEvent) {
 			ts.msgsOrder = append(ts.msgsOrder, height)
 			//fmt.Println("new deliver message", mid, ts.count, timestamp)
 		}
+		fmt.Println("Received block", height, timestamp)
 
 		ts.msgs[height] = append(ts.msgs[height], timestamp)
 
@@ -231,8 +233,9 @@ func (ts *tracestat) compute() {
 			return timestamps[i] < timestamps[j]
 		})
 
-		for _, delay := range ts.delays[mid] {
+		for b, delay := range ts.delays[mid] {
 			miliDelay := int((delay + 499999) / 1000000)
+			fmt.Println("Block", b, miliDelay)
 			sum += miliDelay
 			if miliDelay > 0 {
 				count += 1

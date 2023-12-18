@@ -255,6 +255,6 @@ replace (
 	github.com/dymensionxyz/dymint => ../dymint
 	github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.2-alpha.regen.4
 	github.com/gorilla/rpc => github.com/dymensionxyz/rpc v1.3.1
-	github.com/libp2p/go-libp2p-pubsub => github.com/srene/go-libp2p-pubsub v0.0.0-20231213142708-21ac66087874
+	github.com/libp2p/go-libp2p-pubsub => github.com/srene/go-libp2p-pubsub v0.0.0-20231218092424-053747483a46
 	github.com/tendermint/tendermint => github.com/cometbft/cometbft v0.34.28
 )

@@ -71,12 +71,12 @@ func (v *Validator) TxValidator(mp mempool.Mempool, mpoolIDS *nodemempool.Mempoo
 // BlockValidator runs basic checks on the gossiped block
 func (v *Validator) BlockValidator() GossipValidator {
 	return func(blockMsg *GossipMessage) bool {
-		v.logger.Debug("block event received", "from", blockMsg.From, "bytes", len(blockMsg.Data))
 		var gossipedBlock GossipedBlock
 		if err := gossipedBlock.UnmarshalBinary(blockMsg.Data); err != nil {
 			v.logger.Error("failed to deserialize gossiped block", "error", err)
 			return false
 		}
+		v.logger.Debug("block event received", "from", blockMsg.From, "bytes", len(blockMsg.Data), "height", gossipedBlock.Block.Header.Height)
 		if err := gossipedBlock.Validate(); err != nil {
 			v.logger.Error("Invalid gossiped block", "error", err)
 			return false

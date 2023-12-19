@@ -1,4 +1,4 @@
-module github.com/srene/dymint
+module github.com/srene/dymint_test
 
 go 1.19
 

@@ -413,25 +413,24 @@ func (c *Client) tryConnect(ctx context.Context, peer peer.AddrInfo) {
 
 func (c *Client) setupGossiping(ctx context.Context) error {
 
+	opts := []pubsub.Option{}
+	if c.gossipTracer != nil {
+		opts = append(opts, pubsub.WithEventTracer(c.gossipTracer))
+	}
 	pubsub.GossipSubHistoryGossip = 500
 	pubsub.GossipSubHistoryLength = 500
 	pubsub.GossipSubHeartbeatInterval = time.Duration(1 * time.Second)
 	pubsub.GossipSubMaxIHaveMessages = 500
 
-	opts := []pubsub.Option{}
-	if c.gossipTracer != nil {
-		opts = append(opts, pubsub.WithEventTracer(c.gossipTracer))
-	}
-
-	ps, err := pubsub.NewGossipSub(ctx, c.host, opts...)
-	//c.logger.Info("Starting gosssip", "d", pubsub.GossipSubD)
-	//c.logger.Info("Starting gosssip", "dhi", pubsub.GossipSubDhi)
-	//c.logger.Info("Starting gosssip", "dlo", pubsub.GossipSubDlo)
-
 	pubsub.GossipSubDhi = 12
 	pubsub.GossipSubD = 8
 	pubsub.GossipSubDlo = 6
 
+	ps, err := pubsub.NewGossipSub(ctx, c.host, opts...)
+
+	c.logger.Info("Starting gosssip", "d", pubsub.GossipSubD)
+	c.logger.Info("Starting gosssip", "dhi", pubsub.GossipSubDhi)
+	c.logger.Info("Starting gosssip", "hist", pubsub.GossipSubHistoryGossip)
 	if err != nil {
 		return err
 	}

@@ -435,11 +435,11 @@ func (c *Client) setupGossiping(ctx context.Context) error {
 		return err
 	}
 
-	c.txGossiper, err = NewGossiper(c.host, ps, c.getTxTopic(), c.logger, WithValidator(c.txValidator))
+	/*c.txGossiper, err = NewGossiper(c.host, ps, c.getTxTopic(), c.logger, WithValidator(c.txValidator))
 	if err != nil {
 		return err
 	}
-	go c.txGossiper.ProcessMessages(ctx)
+	go c.txGossiper.ProcessMessages(ctx)*/
 
 	c.headerGossiper, err = NewGossiper(c.host, ps, c.getHeaderTopic(), c.logger,
 		WithValidator(c.headerValidator))

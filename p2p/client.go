@@ -199,8 +199,7 @@ func (c *Client) Close() error {
 // GossipTx sends the transaction to the P2P network.
 func (c *Client) GossipTx(ctx context.Context, tx []byte) error {
 	c.logger.Debug("Gossiping TX", "len", len(tx))
-	//return c.txGossiper.Publish(ctx, tx)
-	return nil
+	return c.txGossiper.Publish(ctx, tx)
 }
 
 // SetTxValidator sets the callback function, that will be invoked during message gossiping.

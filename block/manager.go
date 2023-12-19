@@ -219,7 +219,7 @@ func (m *Manager) healthStatusEventCallback(event pubsub.Message) {
 }
 
 func (m *Manager) applyBlockCallback(event pubsub.Message) {
-	m.logger.Debug("Received new block event", "eventData", event.Data())
+	//m.logger.Debug("Received new block event", "eventData", event.Data())
 	eventData := event.Data().(p2p.GossipedBlock)
 
 	block := eventData.Block

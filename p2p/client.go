@@ -199,7 +199,8 @@ func (c *Client) Close() error {
 // GossipTx sends the transaction to the P2P network.
 func (c *Client) GossipTx(ctx context.Context, tx []byte) error {
 	c.logger.Debug("Gossiping TX", "len", len(tx))
-	return c.txGossiper.Publish(ctx, tx)
+	//return c.txGossiper.Publish(ctx, tx)
+	return nil
 }
 
 // SetTxValidator sets the callback function, that will be invoked during message gossiping.
@@ -435,11 +436,11 @@ func (c *Client) setupGossiping(ctx context.Context) error {
 		return err
 	}
 
-	/*c.txGossiper, err = NewGossiper(c.host, ps, c.getTxTopic(), c.logger, WithValidator(c.txValidator))
+	c.txGossiper, err = NewGossiper(c.host, ps, c.getTxTopic(), c.logger, WithValidator(c.txValidator))
 	if err != nil {
 		return err
 	}
-	go c.txGossiper.ProcessMessages(ctx)*/
+	go c.txGossiper.ProcessMessages(ctx)
 
 	c.headerGossiper, err = NewGossiper(c.host, ps, c.getHeaderTopic(), c.logger,
 		WithValidator(c.headerValidator))

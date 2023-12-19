@@ -610,13 +610,13 @@ func (txmp *TxMempool) initialTxCallback(wtx *WrappedTx, res *abci.Response) {
 
 	txmp.metrics.TxSizeBytes.Observe(float64(wtx.Size()))
 	txmp.metrics.Size.Set(float64(txmp.Size()))
-	txmp.logger.Debug(
+	/*txmp.logger.Debug(
 		"inserted new valid transaction",
 		"priority", wtx.Priority(),
 		"tx", fmt.Sprintf("%X", wtx.tx.Hash()),
 		"height", txmp.height,
 		"num_txs", txmp.Size(),
-	)
+	)*/
 	txmp.notifyTxsAvailable()
 }
 

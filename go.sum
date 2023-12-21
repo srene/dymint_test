@@ -237,6 +237,8 @@ github.com/dymensionxyz/cosmosclient v0.4.2-beta h1:sokBefcN1tIOlUKmB8Q2E9XMJ93L
 github.com/dymensionxyz/cosmosclient v0.4.2-beta/go.mod h1:GQQu3ITEjWfi5ULR2B6X2i2YZNennY1yzcT5qdL4MGI=
 github.com/dymensionxyz/dymension v1.0.2-beta h1:YxRK1RnQs9Fdwkjv+3QafapUdTlwR7JlusZRE/WiCQI=
 github.com/dymensionxyz/dymension v1.0.2-beta/go.mod h1:H58P/Sr1XarnbauzPBDlHexRA7RNgDWV8xJ14e/ONU8=
+github.com/dymensionxyz/go-libp2p-pubsub v0.0.0-20231219183151-4504d4995913 h1:sR3nGYRlktL2Xfj5pcOhgG2bvlBOZ14meqdu2TKkSCU=
+github.com/dymensionxyz/go-libp2p-pubsub v0.0.0-20231219183151-4504d4995913/go.mod h1:1OxbaT/pFRO5h+Dpze8hdHQ63R0ke55XTs6b6NwLLkw=
 github.com/dymensionxyz/rpc v1.3.1 h1:7EXWIobaBes5zldRvTIg7TmNsEKjicrWA/OjCc0NaGs=
 github.com/dymensionxyz/rpc v1.3.1/go.mod h1:f+WpX8ysy8wt95iGc6auYlHcnHj2bUkhiRVkkKNys8c=
 github.com/elastic/gosigar v0.12.0/go.mod h1:iXRIGg2tLnu7LBdpqzyQfGDEidKCfWcCMS0WKyPWoMs=

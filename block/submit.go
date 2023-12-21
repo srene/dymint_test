@@ -22,10 +22,12 @@ func (m *Manager) SubmitLoop(ctx context.Context) {
 		// case <- requiredByNumOfBlocks
 		case <-ticker.C:
 			// SyncTarget is the height of the last block in the last batch as seen by this node.
+			m.logger.Debug("Batch submission tick")
 			syncTarget := atomic.LoadUint64(&m.syncTarget)
 			height := m.store.Height()
 			//no new blocks produced yet
 			if (height - syncTarget) == 0 {
+				m.logger.Debug("Nothing to submit")
 				continue
 			}
 

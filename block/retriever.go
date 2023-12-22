@@ -50,18 +50,15 @@ func (m *Manager) syncUntilTarget(ctx context.Context, syncTarget uint64) error 
 		m.logger.Info("Syncing until target", "height", currentHeight, "state_index", currStateIdx, "syncTarget", syncTarget)
 		settlementBatch, err := m.settlementClient.RetrieveBatch(currStateIdx)
 		if err != nil {
-			fmt.Printf("error settlementBatch %s", err.Error())
 			return err
 		}
 
 		if settlementBatch.StartHeight != currentHeight+1 {
-			fmt.Printf("error settlement batch height %s", err.Error())
 			return fmt.Errorf("settlement batch start height (%d) on index (%d) is not the expected", settlementBatch.StartHeight, currStateIdx)
 		}
 
 		err = m.processNextDABatch(ctx, settlementBatch.MetaData.DA.Height)
 		if err != nil {
-			fmt.Printf("error processing da batch %s", err.Error())
 			return err
 		}
 
@@ -72,8 +69,6 @@ func (m *Manager) syncUntilTarget(ctx context.Context, syncTarget uint64) error 
 
 		err = m.updateStateIndex(settlementBatch.StateIndex)
 		if err != nil {
-			fmt.Printf("error updating state index %s", err.Error())
-
 			return err
 		}
 	}

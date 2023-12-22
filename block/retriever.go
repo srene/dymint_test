@@ -65,10 +65,10 @@ func (m *Manager) syncUntilTarget(ctx context.Context, syncTarget uint64) error 
 			return err
 		}
 
-		/*currentHeight = m.store.Height()
+		currentHeight = m.store.Height()
 		if currentHeight != settlementBatch.EndHeight {
 			return fmt.Errorf("after applying state index (%d), the height (%d) is not as expected (%d)", currStateIdx, currentHeight, settlementBatch.EndHeight)
-		}*/
+		}
 
 		err = m.updateStateIndex(settlementBatch.StateIndex)
 		if err != nil {

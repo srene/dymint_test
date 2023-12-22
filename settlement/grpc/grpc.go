@@ -332,12 +332,13 @@ func (c *HubGrpcClient) convertBatchtoSettlementBatch(batch *types.Batch, daClie
 
 func (c *HubGrpcClient) retrieveBatchAtStateIndex(slStateIndex uint64) (*settlement.ResultRetrieveBatch, error) {
 	//b, err := c.settlementKV.Get(getKey(slStateIndex))
+	c.logger.Debug("Retrieving batch from grpc settlement layer", "SL state index", slStateIndex)
+
 	getBatchReply, err := c.sl.GetBatch(c.ctx, &slmock.SLGetBatchRequest{Index: slStateIndex})
 	if err != nil {
 		return nil, settlement.ErrBatchNotFound
 	}
 	b := getBatchReply.GetBatch()
-	c.logger.Debug("Retrieving batch from grpc settlement layer", "SL state index", slStateIndex)
 	if b == nil {
 		return nil, settlement.ErrBatchNotFound
 	}

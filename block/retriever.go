@@ -71,6 +71,8 @@ func (m *Manager) syncUntilTarget(ctx context.Context, syncTarget uint64) error 
 
 		err = m.updateStateIndex(settlementBatch.StateIndex)
 		if err != nil {
+			fmt.Printf("error updating state index %s", err.Error())
+
 			return err
 		}
 	}

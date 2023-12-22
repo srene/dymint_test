@@ -25,6 +25,7 @@ func (m *Manager) RetrieveLoop(ctx context.Context) {
 			m.logger.Info("Retrieveloop", "synctarget", m.store.Height())
 			err := m.syncUntilTarget(ctx, *(*uint64)(syncTarget))
 			if err != nil {
+				fmt.Println("Error ", err.Error())
 				panic(err)
 			}
 			// Check if after we sync we are synced or a new syncTarget was already set.

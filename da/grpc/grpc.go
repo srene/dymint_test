@@ -63,6 +63,8 @@ func (d *DataAvailabilityLayerClient) Start() error {
 	var opts []grpc.DialOption
 	// TODO(tzdybal): add more options
 	opts = append(opts, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	maxMsgSize := 1024 * 1024 * 20
+	opts = append(opts, grpc.WithDefaultCallOptions(grpc.MaxCallRecvMsgSize(maxMsgSize), grpc.MaxCallSendMsgSize(maxMsgSize)))
 	d.conn, err = grpc.Dial(d.config.Host+":"+strconv.Itoa(d.config.Port), opts...)
 	if err != nil {
 		return err

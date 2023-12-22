@@ -552,11 +552,11 @@ func (txmp *TxMempool) initialTxCallback(wtx *WrappedTx, res *abci.Response) {
 		// drop the new one.
 		if len(victims) == 0 || victimBytes < wtx.Size() {
 			txmp.cache.Remove(wtx.tx)
-			txmp.logger.Error(
+			/*txmp.logger.Error(
 				"rejected valid incoming transaction; mempool is full",
 				"tx", fmt.Sprintf("%X", wtx.tx.Hash()),
 				"err", err.Error(),
-			)
+			)*/
 			checkTxRes.CheckTx.MempoolError =
 				fmt.Sprintf("rejected valid incoming transaction; mempool is full (%X)",
 					wtx.tx.Hash())

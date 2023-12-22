@@ -53,9 +53,9 @@ func (m *Manager) syncUntilTarget(ctx context.Context, syncTarget uint64) error 
 			return err
 		}
 
-		if settlementBatch.StartHeight != currentHeight+1 {
+		/*if settlementBatch.StartHeight != currentHeight+1 {
 			return fmt.Errorf("settlement batch start height (%d) on index (%d) is not the expected", settlementBatch.StartHeight, currStateIdx)
-		}
+		}*/
 
 		err = m.processNextDABatch(ctx, settlementBatch.MetaData.DA.Height)
 		if err != nil {

@@ -20,7 +20,7 @@ import (
 func GetServer(kv store.KVStore, conf grpcda.Config, mockConfig []byte) *grpc.Server {
 	logger := tmlog.NewTMLogger(os.Stdout)
 
-	srv := grpc.NewServer()
+	srv := grpc.NewServer(grpc.MaxRecvMsgSize(1024*1024*20), grpc.MaxSendMsgSize(1024*1024*20))
 	mockImpl := &mockImpl{}
 	err := mockImpl.mock.Init(mockConfig, pubsub.NewServer(), kv, logger)
 	if err != nil {

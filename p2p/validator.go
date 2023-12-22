@@ -42,7 +42,7 @@ func NewValidator(logger log.Logger, pusbsubServer *pubsub.Server) *Validator {
 // transaction. If the transaction is valid, then it is added to the mempool.
 func (v *Validator) TxValidator(mp mempool.Mempool, mpoolIDS *nodemempool.MempoolIDs) GossipValidator {
 	return func(txMessage *GossipMessage) bool {
-		v.logger.Debug("transaction received", "bytes", len(txMessage.Data))
+		//v.logger.Debug("transaction received", "bytes", len(txMessage.Data))
 		checkTxResCh := make(chan *abci.Response, 1)
 		err := mp.CheckTx(txMessage.Data, func(resp *abci.Response) {
 			checkTxResCh <- resp

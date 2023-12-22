@@ -19,8 +19,9 @@ import (
 // GetServer creates and returns gRPC server instance.
 func GetServer(kv store.KVStore, conf grpcda.Config, mockConfig []byte) *grpc.Server {
 	logger := tmlog.NewTMLogger(os.Stdout)
+	maxMsgSize := 1024 * 1024 * 100
 
-	srv := grpc.NewServer(grpc.MaxRecvMsgSize(1024*1024*20), grpc.MaxSendMsgSize(1024*1024*20))
+	srv := grpc.NewServer(grpc.MaxRecvMsgSize(maxMsgSize), grpc.MaxSendMsgSize(maxMsgSize))
 	mockImpl := &mockImpl{}
 	err := mockImpl.mock.Init(mockConfig, pubsub.NewServer(), kv, logger)
 	if err != nil {

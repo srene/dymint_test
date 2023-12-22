@@ -76,7 +76,7 @@ func (m *Manager) submitNextBatch(ctx context.Context) {
 	m.logger.Info("Submitting next batch", "startHeight", startHeight, "endHeight", actualEndHeight, "size", nextBatch.ToProto().Size())
 	resultSubmitToDA := m.dalc.SubmitBatch(nextBatch)
 	if resultSubmitToDA.Code != da.StatusSuccess {
-		panic("Failed to submit next batch to DA Layer")
+		panic("Failed to submit next batch to DA Layer " + resultSubmitToDA.Message)
 		//m.logger.Error("Failed to submit batch", "startHeight", startHeight, "endHeight", endHeight, "error", err)
 
 	}

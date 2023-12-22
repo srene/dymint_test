@@ -58,6 +58,7 @@ func (m *Manager) syncUntilTarget(ctx context.Context, syncTarget uint64) error 
 
 		err = m.processNextDABatch(ctx, settlementBatch.MetaData.DA.Height)
 		if err != nil {
+			fmt.Printf("error processing da batch %s", err.Error())
 			return err
 		}
 

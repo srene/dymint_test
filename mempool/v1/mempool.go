@@ -517,11 +517,11 @@ func (txmp *TxMempool) initialTxCallback(wtx *WrappedTx, res *abci.Response) {
 		elt, ok := txmp.txBySender[sender]
 		if ok {
 			w := elt.Value.(*WrappedTx)
-			/*txmp.logger.Debug(
+			txmp.logger.Debug(
 				"rejected valid incoming transaction; tx already exists for sender",
 				"tx", fmt.Sprintf("%X", w.tx.Hash()),
 				"sender", sender,
-			)*/
+			)
 			checkTxRes.CheckTx.MempoolError =
 				fmt.Sprintf("rejected valid incoming transaction; tx already exists for sender %q (%X)",
 					sender, w.tx.Hash())
@@ -552,11 +552,11 @@ func (txmp *TxMempool) initialTxCallback(wtx *WrappedTx, res *abci.Response) {
 		// drop the new one.
 		if len(victims) == 0 || victimBytes < wtx.Size() {
 			txmp.cache.Remove(wtx.tx)
-			/*txmp.logger.Error(
+			txmp.logger.Error(
 				"rejected valid incoming transaction; mempool is full",
 				"tx", fmt.Sprintf("%X", wtx.tx.Hash()),
 				"err", err.Error(),
-			)*/
+			)
 			checkTxRes.CheckTx.MempoolError =
 				fmt.Sprintf("rejected valid incoming transaction; mempool is full (%X)",
 					wtx.tx.Hash())
@@ -610,13 +610,13 @@ func (txmp *TxMempool) initialTxCallback(wtx *WrappedTx, res *abci.Response) {
 
 	txmp.metrics.TxSizeBytes.Observe(float64(wtx.Size()))
 	txmp.metrics.Size.Set(float64(txmp.Size()))
-	/*txmp.logger.Debug(
+	txmp.logger.Debug(
 		"inserted new valid transaction",
 		"priority", wtx.Priority(),
 		"tx", fmt.Sprintf("%X", wtx.tx.Hash()),
 		"height", txmp.height,
 		"num_txs", txmp.Size(),
-	)*/
+	)
 	txmp.notifyTxsAvailable()
 }
 

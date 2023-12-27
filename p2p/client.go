@@ -386,7 +386,7 @@ func (c *Client) advertise(ctx context.Context) error {
 }
 
 func (c *Client) findPeers(ctx context.Context) error {
-	c.logger.Info("finding peers", "namespace", c.getNamespace())
+	c.logger.Info("finding peers", "namespace", c.getNamespace(), "peers", len(c.Peers()))
 	peerCh, err := c.disc.FindPeers(ctx, c.getNamespace(), cdiscovery.Limit(peerLimit))
 	if err != nil {
 		return err

@@ -202,6 +202,7 @@ func (ts *tracestat) compute() {
 		for i, t := range timestamps[1:] {
 			delays[i] = t - t0
 		}
+		fmt.Println("mid", mid)
 		ts.delays[mid] = delays
 	}
 
@@ -241,7 +242,11 @@ func (ts *tracestat) compute() {
 				count += 1
 			}
 		}
-		avgDelay := sum / count
+		//	avgDelay := sum / count
+		avgDelay := 0
+		if count > 0 {
+			avgDelay = sum / count
+		}
 		ts.avgDelay[mid] = avgDelay
 	}
 }
@@ -263,6 +268,6 @@ func (ts *tracestat) printCDF() {
 func (ts *tracestat) printAverageDelay() {
 	fmt.Printf("=== Average Delay (ms) ===\n")
 	for _, sample := range ts.msgsOrder {
-		fmt.Printf("%d\n", ts.avgDelay[sample])
+		fmt.Printf("%d %d\n", int(sample), ts.avgDelay[sample])
 	}
 }

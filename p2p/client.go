@@ -315,7 +315,6 @@ func (c *Client) setupDHT(ctx context.Context) error {
 		for {
 			select {
 			case <-ticker.C:
-				// do stuff
 				for _, p := range seedNodes {
 					found := false
 					for _, p2 := range c.Peers() {
@@ -323,10 +322,10 @@ func (c *Client) setupDHT(ctx context.Context) error {
 						if p.ID.String() == string(p2.NodeInfo.ID()) {
 							c.logger.Info("Connected")
 							found = true
-							err = c.dht.Bootstrap(ctx)
+							/*err = c.dht.Bootstrap(ctx)
 							if err != nil {
 								return
-							}
+							}*/
 						}
 					}
 					if !found {

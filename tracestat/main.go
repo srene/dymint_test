@@ -35,7 +35,7 @@ func main() {
 	avg := flag.Bool("avg", false, "pring average propagation delay per message")
 	flag.Parse()
 
-	stat := &tracestat{
+	stat := &blockstat{
 		peers:    make(map[peer.ID]*msgstat),
 		msgs:     make(map[uint64][]int64),
 		delays:   make(map[uint64][]int64),
@@ -66,7 +66,7 @@ func main() {
 }
 
 // tracestat is the tree that's populated as we parse the dump.
-type tracestat struct {
+type blockstat struct {
 	// peers summarizes per-peer stats.
 	peers map[peer.ID]*msgstat
 
@@ -131,7 +131,7 @@ func load(f string, addEvent func(*pb.TraceEvent)) error {
 	}
 }
 
-func (ts *tracestat) addEvent(evt *pb.TraceEvent) {
+func (ts *blockstat) addEvent(evt *pb.TraceEvent) {
 
 	var (
 		peer      = peer.ID(evt.GetPeerID())
@@ -189,7 +189,7 @@ func (ts *tracestat) addEvent(evt *pb.TraceEvent) {
 	}
 }
 
-func (ts *tracestat) compute() {
+func (ts *blockstat) compute() {
 	// sort the message publish/delivery timestamps and transform to delays
 	//fmt.Println("Computing CDF")
 	for mid, timestamps := range ts.msgs {
@@ -251,21 +251,21 @@ func (ts *tracestat) compute() {
 	}
 }
 
-func (ts *tracestat) printSummary() {
+func (ts *blockstat) printSummary() {
 	fmt.Printf("=== Trace Summary ===\n")
 	fmt.Printf("Peers: %d\n", len(ts.peers))
 	fmt.Printf("Published Blocks: %d\n", ts.aggregate.publish)
 	fmt.Printf("Received Blocks: %d\n", ts.aggregate.deliver)
 }
 
-func (ts *tracestat) printCDF() {
+func (ts *blockstat) printCDF() {
 	fmt.Printf("=== Propagation Delay CDF (ms) ===\n")
 	for _, sample := range ts.delayCDF {
 		fmt.Printf("%d %d\n", sample.delay, sample.count)
 	}
 }
 
-func (ts *tracestat) printAverageDelay() {
+func (ts *blockstat) printAverageDelay() {
 	fmt.Printf("=== Average Delay (ms) ===\n")
 	for _, sample := range ts.msgsOrder {
 		fmt.Printf("%d %d\n", int(sample), ts.avgDelay[sample])

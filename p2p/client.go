@@ -33,7 +33,7 @@ const (
 	reAdvertisePeriod = 1 * time.Hour
 
 	// peerLimit defines limit of number of peers returned during active peer discovery.
-	peerLimit = 5
+	peerLimit = 60
 
 	// txTopicSuffix is added after namespace to create pubsub topic for TX gossiping.
 	txTopicSuffix = "-tx"

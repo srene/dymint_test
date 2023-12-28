@@ -340,6 +340,7 @@ func (c *Client) setupPeerDiscovery(ctx context.Context) error {
 	case <-ctx.Done():
 		return ctx.Err()
 	case <-c.dht.RefreshRoutingTable():
+		c.logger.Debug("Refreshroutingtable done")
 	}
 	c.disc = discovery.NewRoutingDiscovery(c.dht)
 	return nil

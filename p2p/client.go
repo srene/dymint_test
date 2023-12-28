@@ -317,8 +317,9 @@ func (c *Client) setupDHT(ctx context.Context) error {
 			case <-ticker.C:
 				for _, p := range seedNodes {
 					found := false
+					c.logger.Info("Peers", len(c.Peers()))
 					for _, p2 := range c.Peers() {
-						c.logger.Info("Connected", "connected", p.ID.String(), "bootstrap", string(p2.NodeInfo.ID()))
+						c.logger.Info("Connected", "connected", string(p2.NodeInfo.ID()), "ip", p2.RemoteIP)
 						if p.ID.String() == string(p2.NodeInfo.ID()) {
 							c.logger.Info("Connected")
 							found = true
@@ -421,10 +422,6 @@ func (c *Client) setupGossiping(ctx context.Context) error {
 	pubsub.GossipSubHistoryLength = 500
 	pubsub.GossipSubHeartbeatInterval = time.Duration(1 * time.Second)
 	pubsub.GossipSubMaxIHaveMessages = 500
-
-	pubsub.GossipSubDhi = 12
-	pubsub.GossipSubD = 8
-	pubsub.GossipSubDlo = 6
 
 	ps, err := pubsub.NewGossipSub(ctx, c.host, opts...)
 

@@ -168,14 +168,14 @@ func (c *Client) startWithHost(ctx context.Context, h host.Host) error {
 		return err
 	}
 
-	c.logger.Debug("setting up DHT")
+	/*c.logger.Debug("setting up DHT")
 	err = c.setupDHT(ctx)
 	if err != nil {
 		return err
 	}
 
 	c.logger.Debug("setting up active peer discovery")
-	/*err = c.peerDiscovery(ctx)
+	err = c.peerDiscovery(ctx)
 	if err != nil {
 		return err
 	}*/

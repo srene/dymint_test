@@ -8,7 +8,7 @@ require (
 	github.com/avast/retry-go/v4 v4.5.0
 	github.com/celestiaorg/go-cnc v0.4.2
 	github.com/centrifuge/go-substrate-rpc-client/v4 v4.0.12
-	github.com/dgraph-io/badger/v3 v3.2103.3
+	github.com/dgraph-io/badger/v3 v3.2103.5
 	github.com/dymensionxyz/cosmosclient v0.4.2-beta
 	github.com/dymensionxyz/dymension v1.0.2-beta
 	github.com/dymensionxyz/dymint v0.0.0-00010101000000-000000000000

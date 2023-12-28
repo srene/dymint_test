@@ -175,10 +175,10 @@ func (c *Client) startWithHost(ctx context.Context, h host.Host) error {
 	}
 
 	c.logger.Debug("setting up active peer discovery")
-	err = c.peerDiscovery(ctx)
+	/*err = c.peerDiscovery(ctx)
 	if err != nil {
 		return err
-	}
+	}*/
 
 	return nil
 }

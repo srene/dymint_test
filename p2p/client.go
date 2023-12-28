@@ -33,7 +33,7 @@ const (
 	reAdvertisePeriod = 1 * time.Hour
 
 	// peerLimit defines limit of number of peers returned during active peer discovery.
-	peerLimit = 60
+	peerLimit = 5
 
 	// txTopicSuffix is added after namespace to create pubsub topic for TX gossiping.
 	txTopicSuffix = "-tx"
@@ -309,45 +309,9 @@ func (c *Client) setupDHT(ctx context.Context) error {
 		return fmt.Errorf("failed to bootstrap DHT: %w", err)
 	}
 
-	ticker := time.NewTicker(2 * time.Second)
-	quit := make(chan struct{})
-	go func() {
-		for {
-			select {
-			case <-ticker.C:
-				for _, p := range seedNodes {
-					found := false
-					c.logger.Info("Peers", len(c.Peers()))
-					for _, p2 := range c.Peers() {
-						c.logger.Info("Connected", "connected", string(p2.NodeInfo.ID()), "ip", p2.RemoteIP)
-						if p.ID.String() == string(p2.NodeInfo.ID()) {
-							c.logger.Info("Connected")
-							found = true
-							/*err = c.dht.Bootstrap(ctx)
-							if err != nil {
-								return
-							}*/
-						}
-					}
-					if !found {
-						c.logger.Info("Bootstrap node not connected", p.ID)
-						err = c.dht.Bootstrap(ctx)
-						if err != nil {
-							return
-						}
-					} else {
-						c.logger.Info("Bootstrap node connected", p.ID)
-					}
-				}
-			case <-quit:
-				ticker.Stop()
-				return
-			}
-		}
-	}()
-
 	c.host = routedhost.Wrap(c.host, c.dht)
 
+	go c.checkBootstrapNodes(ctx, 5*time.Second, seedNodes)
 	return nil
 }
 
@@ -511,4 +475,31 @@ func (c *Client) BlockPublished(block *types.Block) {
 
 func (c *Client) BlockReceived(block *types.Block) {
 	c.tracer.ReceiveBlock(c.host.ID(), block)
+}
+
+func (c *Client) checkBootstrapNodes(ctx context.Context, tick time.Duration, seedNodes []peer.AddrInfo) error {
+	ticker := time.NewTicker(tick)
+	for {
+		select {
+		case <-ticker.C:
+			for _, p := range seedNodes {
+				found := false
+				c.logger.Info("Peers", len(c.Peers()))
+				for _, p2 := range c.Peers() {
+					if p.ID.String() == string(p2.NodeInfo.ID()) {
+						found = true
+						break
+					}
+				}
+				if !found {
+					c.logger.Info("No bootstrap node connected", p.ID)
+					/*err := c.dht.Bootstrap(ctx)
+					if err != nil {
+						c.logger.Info("Error dht bootstraping", err)
+					}*/
+				}
+			}
+
+		}
+	}
 }

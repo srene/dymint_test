@@ -482,6 +482,7 @@ func (c *Client) checkBootstrapNodes(ctx context.Context, tick time.Duration, se
 	for {
 		select {
 		case <-ticker.C:
+			c.logger.Info("Peers", len(c.Peers()))
 			for _, p := range seedNodes {
 				found := false
 				c.logger.Info("Peers", len(c.Peers()))

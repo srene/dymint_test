@@ -12,7 +12,7 @@ require (
 	github.com/dymensionxyz/cosmosclient v0.4.2-beta
 	github.com/dymensionxyz/dymension v1.0.2-beta
 	github.com/dymensionxyz/dymint v0.0.0-00010101000000-000000000000
-	github.com/go-kit/kit v0.12.0
+	github.com/go-kit/kit v0.13.0
 	github.com/gofrs/uuid v4.3.0+incompatible
 	github.com/gogo/protobuf v1.3.3
 	github.com/google/orderedcode v0.0.1

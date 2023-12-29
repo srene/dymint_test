@@ -397,7 +397,9 @@ func (c *Client) setupGossiping(ctx context.Context) error {
 		return err
 	}
 	addrs := c.getSeedAddrInfo(c.conf.Seeds)
-	c.host.Connect(ctx, addrs[0])
+	if len(addrs) > 0 {
+		c.host.Connect(ctx, addrs[0])
+	}
 	c.txGossiper, err = NewGossiper(c.host, ps, c.getTxTopic(), c.logger, WithValidator(c.txValidator))
 	if err != nil {
 		return err

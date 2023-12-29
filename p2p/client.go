@@ -420,6 +420,8 @@ func (c *Client) setupGossiping(ctx context.Context) error {
 	}
 	go c.blockGossiper.ProcessMessages(ctx)
 
+	go c.checkBootstrapNodes(ctx, 5*time.Second, addrs)
+
 	return nil
 }
 

@@ -70,7 +70,6 @@ func (s *server) SetBatch(ctx context.Context, in *slmock.SLSetBatchRequest) (*s
 
 // GetServer creates and returns gRPC server instance.
 func GetServer(conf settlement.GrpcConfig) *grpc.Server {
-	//logger := tmlog.NewTMLogger(os.Stdout)
 
 	srv := grpc.NewServer()
 

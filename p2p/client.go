@@ -169,7 +169,7 @@ func (c *Client) startWithHost(ctx context.Context, h host.Host) error {
 	}
 
 	c.logger.Debug("setting up DHT")
-	err = c.setupDHT(ctx)
+	/*err = c.setupDHT(ctx)
 	if err != nil {
 		return err
 	}
@@ -178,7 +178,7 @@ func (c *Client) startWithHost(ctx context.Context, h host.Host) error {
 	err = c.peerDiscovery(ctx)
 	if err != nil {
 		return err
-	}
+	}*/
 
 	return nil
 }
@@ -396,7 +396,8 @@ func (c *Client) setupGossiping(ctx context.Context) error {
 	if err != nil {
 		return err
 	}
-
+	addrs := c.getSeedAddrInfo(c.conf.Seeds)
+	c.host.Connect(ctx, addrs[0])
 	c.txGossiper, err = NewGossiper(c.host, ps, c.getTxTopic(), c.logger, WithValidator(c.txValidator))
 	if err != nil {
 		return err

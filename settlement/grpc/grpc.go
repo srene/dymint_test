@@ -7,7 +7,6 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"errors"
-	"fmt"
 	"path/filepath"
 	"strconv"
 	"sync/atomic"
@@ -69,10 +68,9 @@ type HubGrpcClient struct {
 	logger         log.Logger
 	pubsub         *pubsub.Server
 	latestHeight   uint64
-	//settlementKV   store.KVStore
-	conn     *grpc.ClientConn
-	sl       slmock.MockSLClient
-	stopchan chan struct{}
+	conn           *grpc.ClientConn
+	sl             slmock.MockSLClient
+	stopchan       chan struct{}
 }
 
 var _ settlement.HubClient = &HubGrpcClient{}
@@ -80,7 +78,6 @@ var _ settlement.HubClient = &HubGrpcClient{}
 func newHubClient(config settlement.Config, pubsub *pubsub.Server, logger log.Logger) (*HubGrpcClient, error) {
 	ctx, _ := context.WithCancel(context.Background())
 
-	logger.Info("New grpc hub client")
 	latestHeight := uint64(0)
 	slStateIndex := uint64(0)
 	proposer, err := initConfig(config)
@@ -88,12 +85,10 @@ func newHubClient(config settlement.Config, pubsub *pubsub.Server, logger log.Lo
 		return nil, err
 	}
 	var opts []grpc.DialOption
-	// TODO(tzdybal): add more options
 	opts = append(opts, grpc.WithTransportCredentials(insecure.NewCredentials()))
 
 	logger.Debug("GRPC Dial ", "ip", config.SLGrpc.Host)
 
-	//conf := DefaultConfig
 	conn, err := grpc.Dial(config.SLGrpc.Host+":"+strconv.Itoa(config.SLGrpc.Port), opts...)
 	if err != nil {
 		logger.Error("Error grpc sl connecting")
@@ -107,7 +102,6 @@ func newHubClient(config settlement.Config, pubsub *pubsub.Server, logger log.Lo
 	if err == nil {
 		slStateIndex = index.GetIndex()
 		var settlementBatch rollapptypes.MsgUpdateState
-		//b, err := settlementKV.Get(getKey(slStateIndex))
 		batchReply, err := client.GetBatch(ctx, &slmock.SLGetBatchRequest{Index: slStateIndex})
 		if err != nil {
 			return nil, err
@@ -119,22 +113,7 @@ func newHubClient(config settlement.Config, pubsub *pubsub.Server, logger log.Lo
 		latestHeight = settlementBatch.StartHeight + settlementBatch.NumBlocks - 1
 	}
 	logger.Debug("Starting grpc SL ", "index", slStateIndex)
-	/*settlementKV := store.NewPrefixKV(slstore, settlementKVPrefix)
-	b, err := settlementKV.Get(slStateIndexKey)
-	if err == nil {
-		slStateIndex = binary.BigEndian.Uint64(b)
-		// Get the latest height from the stateIndex
-		var settlementBatch rollapptypes.MsgUpdateState
-		b, err := settlementKV.Get(getKey(slStateIndex))
-		if err != nil {
-			return nil, err
-		}
-		err = json.Unmarshal(b, &settlementBatch)
-		if err != nil {
-			return nil, errors.New("error unmarshalling batch")
-		}
-		latestHeight = settlementBatch.StartHeight + settlementBatch.NumBlocks - 1
-	}*/
+
 	return &HubGrpcClient{
 		ctx:            ctx,
 		ProposerPubKey: proposer,
@@ -142,19 +121,15 @@ func newHubClient(config settlement.Config, pubsub *pubsub.Server, logger log.Lo
 		pubsub:         pubsub,
 		latestHeight:   latestHeight,
 		slStateIndex:   slStateIndex,
-		//config:         conf,
-		conn:     conn,
-		sl:       client,
-		stopchan: stopchan,
-		//settlementKV:   settlementKV,
+		conn:           conn,
+		sl:             client,
+		stopchan:       stopchan,
 	}, nil
 }
 
 func initConfig(conf settlement.Config) (proposer string, err error) {
 	if conf.KeyringHomeDir == "" {
-		//init store
-		//slstore = store.NewDefaultInMemoryKVStore()
-		//init proposer pub key
+
 		if conf.ProposerPubKey != "" {
 			proposer = conf.ProposerPubKey
 		} else {
@@ -170,8 +145,6 @@ func initConfig(conf settlement.Config) (proposer string, err error) {
 			proposer = hex.EncodeToString(pubKeybytes)
 		}
 	} else {
-		//slstore = store.NewDefaultKVStore(conf.KeyringHomeDir, "data", kvStoreDBName)
-		fmt.Println("Setting proposarkeypath", "path", conf.KeyringHomeDir)
 		proposerKeyPath := filepath.Join(conf.KeyringHomeDir, "config/priv_validator_key.json")
 		key, err := tmp2p.LoadOrGenNodeKey(proposerKeyPath)
 		if err != nil {
@@ -193,10 +166,8 @@ func (c *HubGrpcClient) Start() error {
 			select {
 			case <-c.stopchan:
 				// stop
-				c.logger.Info("Stopping loop")
 				return
 			case <-tick:
-				c.logger.Info("Pooling loop")
 				index, err := c.sl.GetIndex(c.ctx, &slmock.SLGetIndexRequest{})
 				if err == nil {
 					if c.slStateIndex < index.GetIndex() {
@@ -285,18 +256,14 @@ func (c *HubGrpcClient) saveBatch(batch *settlement.Batch) {
 		panic(err)
 	}
 	// Save the batch to the next state index
-	//slStateIndex := atomic.LoadUint64(&c.slStateIndex)
 	c.logger.Debug("Saving batch to grpc settlement layer", "index", c.slStateIndex+1)
 	setBatchReply, err := c.sl.SetBatch(c.ctx, &slmock.SLSetBatchRequest{Index: c.slStateIndex + 1, Batch: b})
-	//err = c.settlementKV.Set(getKey(slStateIndex+1), b)
 	if err != nil {
 		panic(err)
 	}
 	if setBatchReply.GetResult() != c.slStateIndex+1 {
 		panic(err)
 	}
-
-	c.logger.Debug("Saving batch to grpc settlement layer", "index", setBatchReply.GetResult())
 
 	c.slStateIndex = setBatchReply.GetResult()
 
@@ -305,10 +272,6 @@ func (c *HubGrpcClient) saveBatch(batch *settlement.Batch) {
 		panic(err)
 	}
 	c.logger.Debug("Setting grpc SL Index to ", "index", setIndexReply.GetIndex())
-	/*err = c.settlementKV.Set(slStateIndexKey, b)
-	if err != nil {
-		panic(err)
-	}*/
 	// Save latest height in memory and in store
 	atomic.StoreUint64(&c.latestHeight, batch.EndHeight)
 }
@@ -331,7 +294,6 @@ func (c *HubGrpcClient) convertBatchtoSettlementBatch(batch *types.Batch, daClie
 }
 
 func (c *HubGrpcClient) retrieveBatchAtStateIndex(slStateIndex uint64) (*settlement.ResultRetrieveBatch, error) {
-	//b, err := c.settlementKV.Get(getKey(slStateIndex))
 	c.logger.Debug("Retrieving batch from grpc settlement layer", "SL state index", slStateIndex)
 
 	getBatchReply, err := c.sl.GetBatch(c.ctx, &slmock.SLGetBatchRequest{Index: slStateIndex})

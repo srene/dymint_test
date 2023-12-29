@@ -22,7 +22,6 @@ type Config struct {
 
 // Config contains configuration options for DataAvailabilityLayerClient.
 type GrpcConfig struct {
-	// TODO(tzdybal): add more options!
 	Host string `json:"host"`
 	Port int    `json:"port"`
 }
